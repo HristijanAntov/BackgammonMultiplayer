@@ -1,3 +1,3 @@
 # Backgammon Multiplayer
 
-Implementation of the game Backgammon in Typescript
+Implementation of the game Backgammon in **Typescript**
