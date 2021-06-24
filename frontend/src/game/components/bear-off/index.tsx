@@ -15,7 +15,6 @@ import {
 import { useGameState } from "../../game-manager/game-state";
 import { useNetworkManager } from "../../game-manager/network-manager";
 import { useGameUI } from "../../game-manager/game-ui";
-import { useGameInference } from "../../game-manager/inference";
 
 //utils
 import { bearOffRefs } from "../../dom-refs";
@@ -35,7 +34,7 @@ interface Props {
 const BearOffComponent: React.FC<Props> = ({ player }) => {
   const { state } = useGameState();
   const { emitterService } = useNetworkManager();
-  const {} = useGameInference();
+
   const { uiState, updateUiState } = useGameUI();
   const { bearOff } = state;
 
