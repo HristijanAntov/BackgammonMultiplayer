@@ -9,12 +9,9 @@ import {
   DiceRolledResult,
   Move,
   StateMachine,
-  StateMachineTransition,
   Pip,
-  PipMovesSequence,
   MoveNode,
   PlayerType,
-  MoveTransactionEntry,
   PositionTransition,
   PendingMoveTransactionEntry,
   PositionTransitionEntry,
@@ -22,11 +19,6 @@ import {
 } from "../types";
 
 import { getInitialState, getOpponent } from "../utils";
-
-// import {
-//   getValidMovesPerPip,
-//   getValidPositionTransitions,
-// } from "../utils/obsolete";
 
 import {
   getNextState,
@@ -58,34 +50,21 @@ const authorizeValidStates = (
   return true;
 };
 
-type QUEUED_ACTION_TYPE = "ROLL_DICE";
+// type QUEUED_ACTION_TYPE = "ROLL_DICE";
 
-interface QueuedAction {
-  actionType: QUEUED_ACTION_TYPE;
-  args: any;
-  onFinish: (result: any) => void;
-}
+// interface QueuedAction {
+//   actionType: QUEUED_ACTION_TYPE;
+//   args: any;
+//   onFinish: (result: any) => void;
+// }
 
 export default class Backgammon {
   private state: GameState;
   private pendingTransactionEntries: PendingMoveTransactionEntry[] = [];
   private currentMoveNodes: MoveNode[] | null = null;
-  private queuedActions: QueuedAction[] = [];
 
   constructor() {
     this.state = getInitialState();
-  }
-
-  addQueuedAction(
-    actionType: QUEUED_ACTION_TYPE,
-    args: any,
-    onFinish: (result: any) => void
-  ) {
-    this.queuedActions.push({
-      actionType,
-      args,
-      onFinish,
-    });
   }
 
   switchTurn(player?: PlayerType) {
@@ -168,7 +147,6 @@ export default class Backgammon {
   }
 
   rollDice(player: PlayerType): DiceRolledResult | undefined {
-    // this.addQueuedAction('ROLL_DICE', player, )
     console.log("dovagjam ovde", player);
     const { diceRolled, initDiceRolled, stateMachine } = this.state;
     const validStates: StateMachine[] = ["PENDING_INIT_ROLL", "PENDING_ROLL"];
