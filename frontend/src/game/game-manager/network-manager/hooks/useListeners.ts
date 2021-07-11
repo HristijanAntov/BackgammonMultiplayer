@@ -158,7 +158,16 @@ const useListeners = (params: Params): Result => {
 
       updateNetworkState({ ...currentNetworkState, status: "STARTED" });
 
-      //TODO: handle
+      const pressedButtonsState = {
+        pressedRoll: false,
+        pressedUndo: false,
+        pressedConfirm: false,
+      };
+
+      updateUiState({
+        ...currentUiState,
+        ...pressedButtonsState,
+      });
     });
 
     IO.on(actions.EXECUTE_ROLL, async (payload: ExecuteRollPayload) => {

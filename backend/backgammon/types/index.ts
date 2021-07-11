@@ -82,6 +82,7 @@ export interface MoveTransactionEntry {
 export interface PendingMoveTransactionEntry {
   move: Move;
   previousState: GameState;
+  previousMoveNodes: MoveNode[];
   nextState: GameState;
 }
 

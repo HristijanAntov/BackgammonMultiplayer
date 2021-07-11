@@ -90,9 +90,11 @@ export const InferenceProvider: React.FC = ({ children }) => {
   };
 
   const canConfirmMove = () => {
+    const { pressedConfirm } = uiState;
     const { stateMachine, diceRolled, positionTransitionsMap } = state;
     const checks = [
       isMyTurn,
+      !pressedConfirm,
       stateMachine === "PENDING_MOVE",
       diceRolled.length === 0 || positionTransitionsMap.length === 0,
     ];
@@ -101,8 +103,15 @@ export const InferenceProvider: React.FC = ({ children }) => {
   };
 
   const canUndo = () => {
+    const { isExecutingMove, pressedUndo } = uiState;
     const { stateMachine } = state;
-    const checks = [isMyTurn, stateMachine === "PENDING_MOVE"];
+
+    const checks = [
+      !pressedUndo,
+      isMyTurn,
+      stateMachine === "PENDING_MOVE",
+      !isExecutingMove,
+    ];
 
     return every(checks, identity);
   };
@@ -125,8 +134,8 @@ export const InferenceProvider: React.FC = ({ children }) => {
 
     const check =
       isRolling ||
-      (stateMachine === "PENDING_INIT_ROLL" && initDiceRolled[player] !== -1) ||
-      stateMachine === "PENDING_MOVE";
+      stateMachine === "PENDING_MOVE" ||
+      (stateMachine === "PENDING_INIT_ROLL" && initDiceRolled[player] !== -1);
 
     return check;
   };
