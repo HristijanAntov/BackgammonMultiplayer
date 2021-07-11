@@ -23,6 +23,7 @@ const App: React.FC = () => {
   const [playSelectChecker] = useSound("/sound-effects/select-checker.wav");
 
   const [confirmMove] = useSound("/sound-effects/confirm-move.wav");
+  const [undoMove] = useSound("/sound-effects/undo.wav");
 
   useEffect(() => {
     const onResize = () => {
@@ -91,6 +92,13 @@ const App: React.FC = () => {
         id="play-confirm-move"
       >
         Confirm Move
+      </button>
+      <button
+        style={{ display: "none" }}
+        onClick={() => undoMove()}
+        id="play-undo-move"
+      >
+        Undo Move
       </button>
     </ThemeProvider>
   );
