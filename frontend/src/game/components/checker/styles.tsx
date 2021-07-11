@@ -17,8 +17,8 @@ const animateMove = (targetPosition: Position) => keyframes`
 
 const blinkChecker = () => keyframes`
   0% {
- 
-    background: linear-gradient(-30deg, rgb(0 206 55), rgb(16 25 133));
+    background: linear-gradient(-30deg, rgb(22 206 122), rgb(116 125 133));
+    // background: linear-gradient(-30deg, rgb(0 206 55), rgb(16 25 133));
   }
   100% {
   
