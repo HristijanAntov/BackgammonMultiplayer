@@ -15,6 +15,8 @@ import useRollDiceAnimation, {
 export interface UIState {
   selectedChecker: undefined | SelectedCheckerMetadata;
   pressedRoll: boolean;
+  pressedUndo: boolean;
+  pressedConfirm: boolean;
   isExecutingMove: boolean;
   isExecutingRoll: Record<PlayerType, boolean>;
 }
@@ -56,6 +58,8 @@ export const GameUIProvider: React.FC = ({ children }) => {
   const [uiState, updateUiState] = useState<UIState>({
     selectedChecker: undefined,
     pressedRoll: false,
+    pressedUndo: false,
+    pressedConfirm: false,
     isExecutingMove: false,
     isExecutingRoll: {
       W: false,

@@ -17,8 +17,9 @@ import { BarActions, ControlItem, CheckIcon, UndoIcon } from "./styles";
 interface Props {}
 
 const BarActionsComponent: React.FC<Props> = () => {
+  const { uiState, updateUiState } = useGameUI();
   const { emitterService } = useNetworkManager();
-  const { canConfirmMove } = useGameInference();
+  const { canConfirmMove, canUndo } = useGameInference();
 
   const onConfirm = () => {
     const el = document.querySelector(
@@ -26,14 +27,19 @@ const BarActionsComponent: React.FC<Props> = () => {
     ) as HTMLButtonElement;
     el.click();
 
+    updateUiState({ ...uiState, pressedConfirm: true });
     emitterService.confirmMove();
   };
 
   const onUndo = () => {
-    console.log("UNDO ACTION: TODO");
+    const el = document.querySelector("#play-undo-move") as HTMLButtonElement;
+    el.click();
+
+    updateUiState({ ...uiState, pressedUndo: true });
+    emitterService.undo();
   };
 
-  const isUndoDisabled = true;
+  const isUndoDisabled = !canUndo();
   const isConfirmDisabled = !canConfirmMove();
 
   return (
