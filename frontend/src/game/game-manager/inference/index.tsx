@@ -63,9 +63,10 @@ export const InferenceProvider: React.FC = ({ children }) => {
   };
 
   const canInitRoll = () => {
-    const { pressedRoll } = uiState;
+    const { pressedRoll, isExecutingRoll } = uiState;
     const { stateMachine, initDiceRolled } = state;
     const checks = [
+      !isExecutingRoll[myPlayer],
       stateMachine === "PENDING_INIT_ROLL",
       initDiceRolled[myPlayer] === -1,
       !pressedRoll,
@@ -213,8 +214,6 @@ export const InferenceProvider: React.FC = ({ children }) => {
         nonAvailableMovesConsequence !== undefined
           ? (nonAvailableMovesConsequence.payload.rolledDice as number[])
           : diceRolled;
-
-      console.log(resultingRoll, "omg");
 
       const diceMetadata: DieContainerMetadata[] = map(
         resultingRoll,
