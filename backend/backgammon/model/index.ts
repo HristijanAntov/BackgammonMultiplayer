@@ -50,14 +50,6 @@ const authorizeValidStates = (
   return true;
 };
 
-// type QUEUED_ACTION_TYPE = "ROLL_DICE";
-
-// interface QueuedAction {
-//   actionType: QUEUED_ACTION_TYPE;
-//   args: any;
-//   onFinish: (result: any) => void;
-// }
-
 export default class Backgammon {
   private state: GameState;
   private pendingTransactionEntries: PendingMoveTransactionEntry[] = [];
@@ -225,7 +217,6 @@ export default class Backgammon {
 
     if (!canRoll) {
       console.log(`Invalid Action: Cannot roll in state: ${stateMachine} `);
-      // throw new Error(`Invalid Action: Cannot roll in state: ${stateMachine} `);
       return;
     }
 
@@ -287,14 +278,14 @@ export default class Backgammon {
       );
     }
 
+    const nextState = getNextState(this.state, move);
+
     this.pendingTransactionEntries.push({
       move,
+      nextState,
       previousState: this.state,
-      nextState: getNextState(this.state, move),
+      previousMoveNodes: this.currentMoveNodes,
     });
-
-    const nextState = getNextState(this.state, move);
-    // const nextValidMoves = getValidMoves(nextState, move.player);
 
     const nextMoveNodes = getNextMoveNodesAfterMove(
       this.currentMoveNodes,
@@ -319,13 +310,22 @@ export default class Backgammon {
 
   undo() {
     const pendingTransactionEntries = this.pendingTransactionEntries;
+    const undoedTransactionEntry = last(pendingTransactionEntries);
+
     const undoedState = get(
-      last(pendingTransactionEntries),
+      undoedTransactionEntry,
       "previousState",
       this.getState()
     );
 
+    const undoedMoveNodes = get(
+      undoedTransactionEntry,
+      "previousMoveNodes",
+      this.currentMoveNodes
+    );
+
     this.state = { ...undoedState };
+    this.currentMoveNodes = undoedMoveNodes;
     this.pendingTransactionEntries = pendingTransactionEntries.slice(0, -1);
   }
 
@@ -339,31 +339,11 @@ export default class Backgammon {
       return [];
     }
 
-    // if (from === "hit-space") {
-    //   const validMoves = getValidMovesPerPip(
-    //     "hit-space",
-    //     this.state,
-    //     this.state.turn as PlayerType
-    //   );
-
-    //   const pickedMoveSequence = pickMoveFromSequence(to, {
-    //     pipId: "hit-space",
-    //     moves: validMoves,
-    //   });
-    //   return pickedMoveSequence || [];
-    // }
-
     const pip = pips.find((p) => p.pipId === from);
 
     if (pip === undefined && from !== "hit-space") {
       throw new Error(`Invalid position pip not present`);
     }
-
-    // const validMoves = getValidMovesPerPip(
-    //   pip,
-    //   this.state,
-    //   this.state.turn as PlayerType
-    // );
 
     const validMoves = generateAllMoveSequencesFromPositionTransition(
       currentMoveNodes,
