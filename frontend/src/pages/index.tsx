@@ -7,6 +7,7 @@ import { GameStateProvider } from "../game/game-manager/game-state";
 import { GameUIProvider } from "../game/game-manager/game-ui";
 import { NetworkManagerProvider } from "../game/game-manager/network-manager";
 import { InferenceProvider } from "../game/game-manager/inference";
+import { StatsProvider } from "../game/game-manager/stats";
 
 const RouterWrapper: React.FC = () => {
   return (
@@ -15,16 +16,18 @@ const RouterWrapper: React.FC = () => {
         <GameUIProvider>
           <NetworkManagerProvider>
             <InferenceProvider>
-              <Switch>
-                {routes.map((route) => (
-                  <Route
-                    key={route.id}
-                    exact={route.isExact}
-                    path={route.path}
-                    component={route.component}
-                  />
-                ))}
-              </Switch>
+              <StatsProvider>
+                <Switch>
+                  {routes.map((route) => (
+                    <Route
+                      key={route.id}
+                      exact={route.isExact}
+                      path={route.path}
+                      component={route.component}
+                    />
+                  ))}
+                </Switch>
+              </StatsProvider>
             </InferenceProvider>
           </NetworkManagerProvider>
         </GameUIProvider>

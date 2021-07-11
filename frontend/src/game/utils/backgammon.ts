@@ -3,6 +3,7 @@ import some from "lodash/some";
 import { PlayerType, PositionTransitionEntry } from "../types";
 
 import { NetworkRole } from "../game-manager/network-manager/types";
+import { PlayerNameEnum } from "../components/constants";
 
 export const isFacingNorth = (player: PlayerType) => player === "W";
 
@@ -24,3 +25,6 @@ export const isThereMoveOnPipPosition = (
 
   return isThereMove;
 };
+
+export const getPlayerTypeName = (player: PlayerType | undefined) =>
+  player === undefined ? "" : PlayerNameEnum[player];

@@ -235,6 +235,11 @@ const useListeners = (params: Params): Result => {
       const transactionEntries: MoveTransactionEntry[] =
         payload.transactionEntries;
 
+      updateUiState({
+        ...currentUiState,
+        isExecutingMove: true,
+      });
+
       for (let i = 0; i < transactionEntries.length; i++) {
         const move = transactionEntries[i].move;
         const updatedState = transactionEntries[i].state;

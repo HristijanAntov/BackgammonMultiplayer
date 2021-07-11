@@ -54,6 +54,11 @@ export const Player: Record<string, PlayerType> = {
   White: "W",
 };
 
+export const PlayerNameEnum: Record<PlayerType, string> = {
+  W: "White",
+  B: "Black",
+};
+
 export const INITIAL_STATE: GameState = {
   turn: "W",
   diceRolled: [4, 3],
