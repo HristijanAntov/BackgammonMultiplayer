@@ -104,9 +104,12 @@ export const InferenceProvider: React.FC = ({ children }) => {
 
   const canUndo = () => {
     const { isExecutingMove, pressedUndo } = uiState;
-    const { stateMachine } = state;
+    const { stateMachine, diceRolled, plyRoll } = state;
+
+    const hasPlayedAtLeast1AtomicMove = plyRoll.length > diceRolled.length;
 
     const checks = [
+      hasPlayedAtLeast1AtomicMove,
       !pressedUndo,
       isMyTurn,
       stateMachine === "PENDING_MOVE",

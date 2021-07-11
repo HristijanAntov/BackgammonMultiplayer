@@ -60,7 +60,7 @@ export default class Backgammon {
   }
 
   switchTurn(player?: PlayerType) {
-    const { turn, stateMachine } = this.state;
+    const { turn } = this.state;
 
     this.transitionStateMachine("PENDING_ROLL");
 
@@ -75,11 +75,16 @@ export default class Backgammon {
       throw new Error("Invalid State: Cannot switch turn");
     }
 
-    this.state = {
-      ...this.state,
+    const resettedStateFields = {
       turn: getOpponent(turn),
       diceRolled: [],
+      plyRoll: [],
       positionTransitionsMap: [],
+    };
+
+    this.state = {
+      ...this.state,
+      ...resettedStateFields,
     };
   }
 
@@ -221,9 +226,11 @@ export default class Backgammon {
     }
 
     const rolledDice = rollDice();
+    this.state.diceRolled = [...rolledDice];
+    this.state.plyRoll = [...rolledDice];
+
     console.log(`ROLLED DICE`, rolledDice);
     console.log("-".repeat(50));
-    this.state.diceRolled = rolledDice;
 
     const moveNodes = getValidMoveNodes(
       getPossibleMoveNodes(this.state, player)

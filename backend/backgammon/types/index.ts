@@ -21,6 +21,7 @@ export interface GameState {
   turn: PlayerType | undefined;
   stateMachine: StateMachine;
   diceRolled: number[];
+  plyRoll: number[];
   initDiceRolled: PlayerBuckets;
   positionTransitionsMap: PositionTransitionEntry[];
   pips: Pip[];

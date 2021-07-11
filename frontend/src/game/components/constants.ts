@@ -57,6 +57,7 @@ export const Player: Record<string, PlayerType> = {
 export const INITIAL_STATE: GameState = {
   turn: "W",
   diceRolled: [4, 3],
+  plyRoll: [4, 3],
   // pipMovesSequences: [],
   positionTransitionsMap: [],
   stateMachine: "PENDING_ROLL",
