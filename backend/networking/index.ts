@@ -141,7 +141,7 @@ export default class GameManager {
     const moves = game.pickMoveByPositionTransition(payload) || [];
     const transactionEntries: MoveTransactionEntry[] = [];
 
-    for (let i = 0; i < moves?.length; i++) {
+    for (let i = 0; i < moves.length; i++) {
       game.move(moves[i]);
       const newState = game.getState();
 
