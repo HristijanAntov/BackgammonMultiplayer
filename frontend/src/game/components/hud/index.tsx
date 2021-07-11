@@ -23,13 +23,8 @@ interface Props {
 const HUDComponent: React.FC<Props> = ({ player }) => {
   const { uiState, updateUiState } = useGameUI();
   const { emitterService } = useNetworkManager();
-  const {
-    canInitRoll,
-    canRoll,
-    myPlayer,
-    canConfirmMove,
-    shouldShowDiceContainer,
-  } = useGameInference();
+  const { canInitRoll, canRoll, myPlayer, shouldShowDiceContainer } =
+    useGameInference();
 
   const onRoll = (isInit: boolean) => {
     updateUiState({
@@ -45,15 +40,6 @@ const HUDComponent: React.FC<Props> = ({ player }) => {
     emitterService.pressRoll();
   };
 
-  const onConfirm = () => {
-    const el = document.querySelector(
-      "#play-confirm-move"
-    ) as HTMLButtonElement;
-    el.click();
-
-    emitterService.confirmMove();
-  };
-
   return (
     <HUD>
       <ActionButtonsWrapper>
@@ -66,9 +52,6 @@ const HUDComponent: React.FC<Props> = ({ player }) => {
           </RollButton>
         )}
 
-        {player === myPlayer && canConfirmMove() && (
-          <RollButton onClick={() => onConfirm()}>Confirm Move</RollButton>
-        )}
         {shouldShowDiceContainer(player) && <DiceContainer player={player} />}
       </ActionButtonsWrapper>
     </HUD>
