@@ -47,20 +47,13 @@ const App: React.FC = () => {
 
   const theme = {
     dimensions: {
-      width: Math.max(400, currentWidth * 0.6), //currentWidth * BOARD_RATIO,
-      height: Math.min(700, currentHeight * 0.75), //(currentWidth * BOARD_RATIO) / BOARD_ASPECT_RATIO,
+      width: Math.min(1000, currentWidth * 0.8), //currentWidth * BOARD_RATIO,
+      height: Math.min(1000, currentHeight * 0.8), //(currentWidth * BOARD_RATIO) / BOARD_ASPECT_RATIO,
     },
   };
 
   return (
     <ThemeProvider theme={theme}>
-      {/* <GameStateProvider>
-        <GameUIProvider>
-          <NetworkManagerProvider>
-            <Pages />
-          </NetworkManagerProvider>
-        </GameUIProvider>
-      </GameStateProvider> */}
       <Pages />
       <button
         style={{ display: "none" }}
