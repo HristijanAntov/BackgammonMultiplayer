@@ -40,7 +40,7 @@ export const DIMENSIONS_CONFIG = {
   BAR_TICKNESS_RATIO: 0.03,
   CENTER_BAR_TICKNESS_RATIO: 0.07,
   BEAROFF_BAR_RATIO: 0.09,
-  ACTIVE_CHECKER_RATIO: 0.05  ,
+  ACTIVE_CHECKER_RATIO: 0.05,
   CHECKERS_SPACE_RATIO: 0.0095,
   CHECKER_STACKING_FACTOR: 0.7,
   BEAROFF_CHECKER_RATIO: 0.25,
@@ -55,7 +55,7 @@ export const Player: Record<string, PlayerType> = {
 };
 
 export const INITIAL_STATE: GameState = {
-  turn: 'W',
+  turn: "W",
   diceRolled: [4, 3],
   // pipMovesSequences: [],
   positionTransitionsMap: [],

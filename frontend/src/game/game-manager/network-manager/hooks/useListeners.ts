@@ -209,7 +209,7 @@ const useListeners = (params: Params): Result => {
     });
 
     IO.on(actions.INIT_ROLL, (payload: any) => {
-      console.log(actions.GAME_STARTED, payload);
+      console.log(actions.INIT_ROLL, payload);
       const { state } = payload;
 
       updateGameState({
