@@ -77,7 +77,7 @@ export const PlayerLane = styled.div`
   align-items: center;
   color: white;
   padding: 0px 10px;
- 
+
   & label {
     // padding: 0px 20px;
     font-size: 1.2vw;
