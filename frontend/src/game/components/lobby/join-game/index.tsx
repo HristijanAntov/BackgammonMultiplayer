@@ -1,78 +1,129 @@
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { useNetworkManager } from "../../../game-manager/network-manager";
-import { wait } from "../../../utils";
+import { JoinRoomForm } from "../../../game-manager/network-manager/hooks/useRooms";
 
-import { Container, Title, Paragraph, Button } from "../ui/styles";
+import { Container, Title, Body, Button, ControlWrapper } from "../ui/styles";
+
 import {
   StyledBody,
   GameItems,
+  ItemWrapper,
   Item,
   ItemSection,
   ItemLabel,
   Badge,
 } from "./styles";
+
 //components
+import TextBox from "../ui/textbox";
 
 interface Props {}
 
-const JoinGameComponent: React.FC<Props> = () => {
-  const { emitterService, roomsService } = useNetworkManager();
-  const history = useHistory();
-  const { rooms, isLoading } = roomsService;
+const isFormValid = (form: JoinRoomForm): boolean =>
+  [form.username, form.password].some((it) => it === undefined || it === "");
 
-  // const games = [
-  //   {
-  //     id: "a",
-  //     hostedBy: "Anonymous",
-  //     name: "play-room-1",
-  //   },
-  //   {
-  //     id: "b",
-  //     hostedBy: "Hristijan",
-  //     name: "roomio",
-  //   },
-  //   {
-  //     id: "c",
-  //     hostedBy: "Branko",
-  //     name: "test room 1",
-  //   },
-  //   {
-  //     id: "dd",
-  //     hostedBy: "Valerija",
-  //     name: "friends room 3",
-  //   },
-  // ];
+const JoinGameComponent: React.FC<Props> = () => {
+  const [expandedRoomId, setExpandedRoom] = useState<string | undefined>(
+    undefined
+  );
+  const { emitterService, roomsService } = useNetworkManager();
+
+  const {
+    rooms,
+    isLoading,
+    isJoiningRoom,
+    updateJoinRoomForm,
+    joinRoomForm,
+    setIsJoiningRoom,
+  } = roomsService;
 
   useEffect(() => {
     emitterService.getRooms();
+
     return () => {
       roomsService.setRooms([]);
     };
   }, []);
 
-  const onJoin = (gameId: string) => {
-    console.log("trying to join", gameId);
-    emitterService.joinRoom(gameId, "");
+  const syncField = (key: keyof JoinRoomForm, value: string) => {
+    updateJoinRoomForm({
+      ...joinRoomForm,
+      [key]: value,
+    });
   };
+
+  const onJoin = (roomId: string) => {
+    console.log("trying to join", roomId);
+    setIsJoiningRoom(true);
+
+    const { username, password } = joinRoomForm;
+    console.log(username, password, roomId);
+
+    emitterService.joinRoom(roomId, username as string, password as string);
+  };
+
+  const isJoinDisabled =
+    isFormValid(roomsService.joinRoomForm) || isJoiningRoom;
 
   return (
     <Container>
-      <Title> Available Rooms ({isLoading ? "Loading" : "Up to date"})</Title>
+      <Title>Available Rooms ({isLoading ? "Loading" : "Up to date"})</Title>
       <StyledBody>
         <GameItems>
           {rooms.map((game) => (
-            <Item key={game.id}>
-              <ItemSection>
-                <ItemLabel>{game.name}</ItemLabel>
-              </ItemSection>
-              <ItemSection>
-                <Badge>@{game.hostedBy}</Badge>
-              </ItemSection>
-              <ItemSection>
-                <Button onClick={() => onJoin(game.id)}>Join</Button>
-              </ItemSection>
-            </Item>
+            <ItemWrapper key={game.id} isExpanded={expandedRoomId === game.id}>
+              <Item
+                onClick={() =>
+                  setExpandedRoom((current) =>
+                    current !== game.id ? game.id : undefined
+                  )
+                }
+              >
+                <ItemSection>
+                  <ItemLabel>{game.name}</ItemLabel>
+                </ItemSection>
+                <ItemSection>
+                  <Badge>@{game.hostedBy}</Badge>
+                </ItemSection>
+              </Item>
+
+              {game.id === expandedRoomId && (
+                <Container>
+                  <Body>
+                    <ControlWrapper>
+                      <TextBox
+                        width="100%"
+                        placeholder="Username"
+                        defaultValue=""
+                        value={joinRoomForm.username}
+                        onChange={(value) => syncField("username", value)}
+                      />
+                    </ControlWrapper>
+                    <ControlWrapper>
+                      <TextBox
+                        width="100%"
+                        placeholder="Password"
+                        defaultValue=""
+                        value={joinRoomForm.password}
+                        type="password"
+                        onChange={(value) => syncField("password", value)}
+                      />
+                    </ControlWrapper>
+                    <ControlWrapper style={{ flexDirection: "row-reverse" }}>
+                      <Button
+                        style={{ height: "32px" }}
+                        disabled={isJoinDisabled}
+                        onClick={() => onJoin(game.id)}
+                      >
+                        {isJoiningRoom
+                          ? "Joining Room"
+                          : `Join Room ${game.name}`}
+                      </Button>
+                    </ControlWrapper>
+                  </Body>
+                </Container>
+              )}
+            </ItemWrapper>
           ))}
         </GameItems>
       </StyledBody>

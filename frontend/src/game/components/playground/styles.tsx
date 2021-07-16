@@ -30,7 +30,7 @@ export const Stats = styled.div`
   align-items: center;
   height: 5%;
   margin-bottom: 50px;
-  width: 71%;
+  width: 80%;
   color: white;
 `;
 
@@ -49,4 +49,46 @@ export const Buttons = styled.div`
   & > button {
     margin-left: 4px;
   }
+`;
+
+export const PendingBanner = styled.div`
+  border: 1px solid black;
+  background-image: url(/wood-board.jpg);
+  box-shadow: 9px 3px 19px black;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10%;
+  width: 71%;
+  margin-top: calc(50vh - 20%);
+  color: white;
+  font-size: 20px;
+  font-style: italic;
+`;
+
+export const PlayerLane = styled.div`
+  background-color: transparent;
+  flex: 1;
+  color: black;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  padding: 0px 10px;
+
+  & label {
+    // padding: 0px 20px;
+    font-size: 1.2vw;
+  }
+`;
+
+export const LogLane = styled.div`
+  flex: 2;
+  display: flex;
+  font-size: 1.7vw;
+  justify-content: center;
+  align-items: center;
+  color: orange;
 `;

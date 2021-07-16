@@ -7,6 +7,7 @@ interface Props {
   width?: string;
   defaultValue?: string | undefined;
   value?: string | undefined;
+  type?: any;
   placeholder?: string;
   onChange: (value: string) => void;
 }
@@ -16,10 +17,12 @@ const TextBoxComponent: React.FC<Props> = ({
   value,
   onChange,
   width = "250px",
+  type = "text",
   placeholder = "",
 }) => {
-  const [currentValue, setCurrentValue] =
-    useState<string | undefined>(defaultValue);
+  const [currentValue, setCurrentValue] = useState<string | undefined>(
+    defaultValue
+  );
 
   useEffect(() => {
     setCurrentValue(value);
@@ -36,6 +39,7 @@ const TextBoxComponent: React.FC<Props> = ({
 
   return (
     <TextBox
+      type={type}
       style={{ width }}
       placeholder={placeholder}
       value={currentValue || ""}

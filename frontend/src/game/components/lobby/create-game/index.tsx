@@ -1,27 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNetworkManager } from "../../../game-manager/network-manager";
+import { CreateRoomForm } from "../../../game-manager/network-manager/hooks/useRooms";
 //styles
-import {
-  Container,
-  Title,
-  Body,
-  Button,
-  Paragraph,
-  ControlWrapper,
-} from "../ui/styles";
+import { Container, Title, Body, Button, ControlWrapper } from "../ui/styles";
 
 //components
 import TextBox from "../ui/textbox";
 
 interface Props {}
 
-interface CreateRoomForm {
-  roomName: string | undefined;
-  username: string | undefined;
-}
-
 const isFormValid = (form: CreateRoomForm): boolean =>
-  [form.roomName, form.username].some((it) => it === undefined || it === "");
+  [form.roomName, form.username, form.password].some(
+    (it) => it === undefined || it === ""
+  );
 
 const CreateGameComponent: React.FC<Props> = () => {
   const { emitterService, roomsService } = useNetworkManager();
@@ -46,9 +37,13 @@ const CreateGameComponent: React.FC<Props> = () => {
   const onCreate = () => {
     setIsCreatingRoom(true);
 
-    const { roomName, username } = createRoomForm;
+    const { roomName, username, password } = createRoomForm;
 
-    emitterService.createRoom(roomName as string, username as string);
+    emitterService.createRoom(
+      roomName as string,
+      username as string,
+      password as string
+    );
   };
 
   return (
@@ -71,6 +66,16 @@ const CreateGameComponent: React.FC<Props> = () => {
             defaultValue=""
             value={createRoomForm.username}
             onChange={(value) => syncField("username", value)}
+          />
+        </ControlWrapper>
+        <ControlWrapper>
+          <TextBox
+            width="100%"
+            placeholder="Password"
+            defaultValue=""
+            type="password"
+            value={createRoomForm.password}
+            onChange={(value) => syncField("password", value)}
           />
         </ControlWrapper>
         <ControlWrapper style={{ flexDirection: "row-reverse" }}>

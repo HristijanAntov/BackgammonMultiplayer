@@ -7,16 +7,9 @@ import { actions } from "../constants";
 import { useGameState } from "../../game-state";
 import { UIState, useGameUI } from "../../game-ui";
 import { RoomsService } from "./useRooms";
-import {
-  Consequence,
-  GameState,
-  MoveTransactionEntry,
-  PlayerType,
-} from "../../../types";
+import { Consequence, GameState, MoveTransactionEntry } from "../../../types";
 import { NetworkState, ExecuteRollPayload } from "../types";
 import { wait } from "../../../utils";
-
-import { ROLL_DICE_ANIMATION_DURATION } from "../../../game-manager/game-ui/hooks/useRollDiceAnimation";
 
 interface Result {}
 
@@ -109,20 +102,40 @@ const useListeners = (params: Params): Result => {
       });
     });
 
+    IO.on(actions.SYNC_NETWORK_STATUS, (payload: any) => {
+      console.log(actions.SYNC_NETWORK_STATUS, payload);
+
+      const { roomId, role, hostUsername, guestUsername, status } = payload;
+
+      currentNetworkState = {
+        ...currentNetworkState,
+        status,
+        roomId,
+        role,
+        hostUsername,
+        guestUsername,
+      };
+
+      updateNetworkState(currentNetworkState);
+    });
+
     IO.on(actions.ROOM_JOINED, (payload: any) => {
       console.log(actions.ROOM_JOINED, payload);
-      const { roomId, role, hostUsername, status } = payload;
+      const { roomId, role, hostUsername, guestUsername, status } = payload;
+
       console.log(role, "joiuning");
+
       currentNetworkState = {
         ...currentNetworkState,
         roomId,
         role,
         hostUsername,
+        guestUsername,
         status,
       };
+
       updateNetworkState(currentNetworkState);
       history.push(`/game/${roomId}`);
-      //TODO: handle
     });
 
     IO.on(actions.GAME_STARTED, (payload: any) => {

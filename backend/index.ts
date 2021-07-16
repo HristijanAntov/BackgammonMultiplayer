@@ -3,9 +3,12 @@ import cors from "cors";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import { filter, map } from "lodash";
-import GameManager from "./networking";
+import NetworkingManager from "./networking";
 import { Actions } from "./networking/constants";
 import { Room } from "./networking/types";
+
+import { getUniqueId } from "./utils";
+import { hashPassword, doesPasswordMatchHash } from "./utils/security-utils";
 
 // import { play } from "./test-sim";
 
@@ -15,6 +18,7 @@ const PORT = 3001;
 
 const app = express();
 app.use(cors());
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -24,23 +28,15 @@ const io = new Server(server, {
   },
 });
 
-app.get("/", (req, res) => {
+app.get("/ping", (req, res) => {
   res.send("PONG KICO");
 });
 
-app.get("/game", (req, res) => {
-  res.send({
-    hello: "zdravo",
-  });
-});
-
-export const getUniqueId = () => "_" + Math.random().toString(36).substr(2, 9);
-
 //TODO: put this somewhere else
 
-const managers: GameManager[] = [];
+const networkManagers: NetworkingManager[] = [];
 
-const getPendingRoomsFromManagers = (managers: GameManager[]): Room[] =>
+const getPendingRoomsFromManagers = (managers: NetworkingManager[]): Room[] =>
   map(
     filter(managers, (m) => m.roomStatus === "WAITING_FOR_GUEST"),
     (m) => ({
@@ -52,27 +48,74 @@ const getPendingRoomsFromManagers = (managers: GameManager[]): Room[] =>
 
 io.on("connection", (socket: Socket) => {
   socket.on(Actions.GET_ROOMS, () => {
-    const rooms = getPendingRoomsFromManagers(managers);
+    const rooms = getPendingRoomsFromManagers(networkManagers);
 
     socket.emit(Actions.ROOMS_FETCHED, {
       rooms,
     });
   });
 
-  socket.on(Actions.CREATE_ROOM, (payload: any) => {
+  socket.on(Actions.CREATE_ROOM, async (payload: any) => {
     const id = getUniqueId();
-    const { roomName, username } = payload;
+    const { roomName, username: hostUsername, password } = payload;
 
-    const game_manager = new GameManager(io, id, socket, roomName, username);
-    console.log("room created druga e", id);
-    managers.push(game_manager);
+    console.log("PLAYER WANTS TO CREATE A ROOM", roomName, hostUsername);
+
+    try {
+      const hashedPassword = await hashPassword(password);
+
+      const networkManager = new NetworkingManager(
+        io,
+        id,
+        socket,
+        roomName,
+        hostUsername,
+        hashedPassword
+      );
+
+      networkManagers.push(networkManager);
+    } catch (err) {
+      console.log(err);
+      //TODO: Report error to frontend somehow
+    }
   });
 
-  socket.on(Actions.JOIN_ROOM, ({ roomId }: any) => {
-    const gameManager = managers.find((it) => it.id === roomId);
+  socket.on(Actions.JOIN_ROOM, async (payload: any) => {
+    const { roomId, username, password } = payload;
 
-    if (gameManager) {
-      gameManager.joinPlayer(socket);
+    console.log("PLAYER WANTS TO JOIN A ROOM", roomId, username);
+
+    const networkManager = networkManagers.find((it) => it.id === roomId);
+
+    if (!networkManager) {
+      console.log(`Couldn't find room with id ${roomId} `);
+      return;
+    }
+
+    try {
+      const { roomPasswordHash } = networkManager;
+
+      if (!roomPasswordHash) {
+        throw new Error("Password hash is not present in network manager");
+      }
+
+      const isPasswordValid = await doesPasswordMatchHash(
+        roomPasswordHash,
+        password
+      );
+
+      if (!isPasswordValid) {
+        throw new Error(
+          `password does not match hash for room : (${networkManager.roomName}, ${networkManager.id}) `
+        );
+      }
+
+      if (isPasswordValid) {
+        networkManager.joinPlayer(socket, username);
+      }
+    } catch (err) {
+      console.log(err);
+      //TODO: Report error to frontend somehow
     }
   });
 });
