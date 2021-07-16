@@ -11,6 +11,7 @@ export const Actions = {
   EXECUTE_ROLL: "EXECUTE_ROLL",
   NO_AVAILABLE_MOVES: "NO_AVAILABLE_MOVES",
   ERROR_OCCURRED: "ERROR_OCCURRED",
+  SYNC_NETWORK_STATUS: "SYNC_NETWORK_STATUS",
 
   // Emitters
   GET_ROOMS: "GET_ROOMS",
@@ -25,7 +26,6 @@ export const Actions = {
 
 export const Rooms = {
   PLAYERS: "players",
-  SUPERVISORS: "supervisors",
 };
 
 export const RolePlayerMap: Record<NetworkRole, PlayerType> = {
