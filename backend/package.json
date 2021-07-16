@@ -8,11 +8,13 @@
     "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' index.ts"
   },
   "dependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.11",
     "@types/js-combinatorics": "^0.5.32",
     "@types/lodash": "^4.14.170",
     "@types/node": "^15.6.0",
     "@types/socket.io": "^3.0.2",
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "generatorics": "^1.1.0",
