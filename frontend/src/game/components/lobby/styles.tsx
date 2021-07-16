@@ -6,8 +6,8 @@ export const colors = {
 };
 
 export const Lobby = styled.div`
-  // background-image: url(wood-texture.png);
-  background-color: green;
+  background-image: url(/wood-texture.png);
+
   width: 100%;
   height: 100vh;
   padding: 10px;
@@ -83,7 +83,7 @@ export const Option = styled.div<{ isSelected: boolean }>`
 `;
 
 export const RightContainer = styled.div`
-  flex: 1; 
+  flex: 1;
   height: 100%;
   box-sizing: border-box;
 `;
