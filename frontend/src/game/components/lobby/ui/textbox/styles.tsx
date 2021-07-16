@@ -2,9 +2,7 @@ import styled from "styled-components";
 
 import { colors } from "../../styles";
 
-export const TextBox = styled.input.attrs({
-  type: "textbox",
-})`
+export const TextBox = styled.input`
   outline: none;
   border: none;
   padding: 0px;

@@ -10,8 +10,8 @@ import { RoomsService } from "./useRooms";
 export type VoidEmitter = () => void;
 
 export interface EmitterService {
-  createRoom: (roomName: string, username: string) => void;
-  joinRoom: (roomId: string, username: string) => void;
+  createRoom: (roomName: string, username: string, password: string) => void;
+  joinRoom: (roomId: string, username: string, password: string) => void;
   pressInitRoll: VoidEmitter;
   pressRoll: VoidEmitter;
   getRooms: VoidEmitter;
@@ -37,17 +37,19 @@ const useEmitters = (params: Params): EmitterService => {
     IO.emit(actions.GET_ROOMS, "");
   };
 
-  const createRoom = (roomName: string, username: string) => {
+  const createRoom = (roomName: string, username: string, password: string) => {
     IO.emit(actions.CREATE_ROOM, {
       roomName,
       username,
+      password,
     });
   };
 
-  const joinRoom = (roomId: string, username: string) => {
+  const joinRoom = (roomId: string, username: string, password: string) => {
     IO.emit(actions.JOIN_ROOM, {
       roomId,
       username,
+      password,
     });
   };
 

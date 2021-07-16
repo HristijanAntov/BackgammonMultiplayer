@@ -22,8 +22,9 @@ interface Props {}
 const LobbyComponent: React.FC<Props> = () => {
   const location = useLocation();
 
-  const [selectedOptionId, setSelectedOptionId] =
-    useState<string | undefined>(undefined);
+  const [selectedOptionId, setSelectedOptionId] = useState<string | undefined>(
+    undefined
+  );
 
   const navMenu = [
     {

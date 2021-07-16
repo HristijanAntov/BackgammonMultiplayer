@@ -5,6 +5,13 @@ import { Room } from "../types";
 export interface CreateRoomForm {
   roomName: string | undefined;
   username: string | undefined;
+  password: string | undefined;
+}
+
+export interface JoinRoomForm {
+  roomId: string | undefined;
+  username: string | undefined;
+  password: string | undefined;
 }
 
 export interface RoomsService {
@@ -13,28 +20,51 @@ export interface RoomsService {
   rooms: Room[];
   setRooms: (rooms: Room[]) => void;
   createRoomForm: CreateRoomForm;
+  joinRoomForm: JoinRoomForm;
   isCreatingRoom: boolean;
+  isJoiningRoom: boolean;
   updateCreateRoomForm: (form: CreateRoomForm) => void;
+  updateJoinRoomForm: (form: JoinRoomForm) => void;
+  setIsJoiningRoom: (isJoiningRoom: boolean) => void;
   setIsCreatingRoom: (isCreatingRoom: boolean) => void;
   initCreateForm: () => void;
+  initJoinForm: () => void;
 }
 
 interface Params {}
+
+const initCreateRoomForm = () => ({
+  roomName: undefined,
+  username: undefined,
+  password: undefined,
+});
+
+const initJoinRoomForm = () => ({
+  roomId: undefined,
+  username: undefined,
+  password: undefined,
+});
 
 const useRoomsService = (params: Params): RoomsService => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [isCreatingRoom, setIsCreatingRoom] = useState<boolean>(false);
-  const [createRoomForm, updateCreateRoomForm] = useState<CreateRoomForm>({
-    roomName: undefined,
-    username: undefined,
-  });
+  const [isJoiningRoom, setIsJoiningRoom] = useState<boolean>(false);
+
+  const [createRoomForm, updateCreateRoomForm] = useState<CreateRoomForm>(
+    initCreateRoomForm()
+  );
+
+  const [joinRoomForm, updateJoinRoomForm] = useState<JoinRoomForm>(
+    initJoinRoomForm()
+  );
 
   const initCreateForm = () => {
-    updateCreateRoomForm({
-      roomName: undefined,
-      username: undefined,
-    });
+    updateCreateRoomForm(initCreateRoomForm());
+  };
+
+  const initJoinForm = () => {
+    updateJoinRoomForm(initJoinRoomForm());
   };
 
   return {
@@ -47,6 +77,11 @@ const useRoomsService = (params: Params): RoomsService => {
     setIsCreatingRoom,
     updateCreateRoomForm,
     initCreateForm,
+    isJoiningRoom,
+    setIsJoiningRoom,
+    updateJoinRoomForm,
+    joinRoomForm,
+    initJoinForm,
   };
 };
 
