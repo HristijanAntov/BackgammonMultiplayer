@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Room } from "../types";
+import { Room, IError } from "../types";
 
 export interface CreateRoomForm {
   roomName: string | undefined;
@@ -23,6 +23,8 @@ export interface RoomsService {
   joinRoomForm: JoinRoomForm;
   isCreatingRoom: boolean;
   isJoiningRoom: boolean;
+  error: IError | undefined;
+  setError: (error: IError | undefined) => void;
   updateCreateRoomForm: (form: CreateRoomForm) => void;
   updateJoinRoomForm: (form: JoinRoomForm) => void;
   setIsJoiningRoom: (isJoiningRoom: boolean) => void;
@@ -59,6 +61,8 @@ const useRoomsService = (params: Params): RoomsService => {
     initJoinRoomForm()
   );
 
+  const [error, setError] = useState<IError | undefined>(undefined);
+
   const initCreateForm = () => {
     updateCreateRoomForm(initCreateRoomForm());
   };
@@ -82,6 +86,8 @@ const useRoomsService = (params: Params): RoomsService => {
     updateJoinRoomForm,
     joinRoomForm,
     initJoinForm,
+    error,
+    setError,
   };
 };
 
