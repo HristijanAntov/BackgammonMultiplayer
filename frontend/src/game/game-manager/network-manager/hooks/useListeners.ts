@@ -3,12 +3,12 @@ import { useHistory } from "react-router-dom";
 import map from "lodash/map";
 
 import IO from "../io";
-import { actions } from "../constants";
+import { actions, JOIN_ROOM_ERRORS } from "../constants";
 import { useGameState } from "../../game-state";
 import { UIState, useGameUI } from "../../game-ui";
 import { RoomsService } from "./useRooms";
 import { Consequence, GameState, MoveTransactionEntry } from "../../../types";
-import { NetworkState, ExecuteRollPayload } from "../types";
+import { NetworkState, ExecuteRollPayload, IError, ErrorType } from "../types";
 import { wait } from "../../../utils";
 
 interface Result {}
@@ -135,6 +135,7 @@ const useListeners = (params: Params): Result => {
       };
 
       updateNetworkState(currentNetworkState);
+      roomsService.setError(undefined);
       history.push(`/game/${roomId}`);
     });
 
@@ -275,8 +276,15 @@ const useListeners = (params: Params): Result => {
       });
     });
 
-    IO.on(actions.ERROR_OCCURRED, async (payload: any) => {
-      console.log(actions.ERROR_OCCURRED, "ERROR", payload.error); //TODO
+    IO.on(actions.ERROR_OCCURRED, async (error: IError) => {
+      console.log(actions.ERROR_OCCURRED, "ERROR", error);
+
+      const { errorType } = error;
+
+      if (JOIN_ROOM_ERRORS.includes(errorType)) {
+        roomsService.setError(error);
+        roomsService.setIsJoiningRoom(false);
+      }
     });
   }, []);
 
