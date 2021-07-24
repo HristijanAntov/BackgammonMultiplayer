@@ -28,3 +28,10 @@ export interface ExecuteRollPayload {
   consequences: Consequence[];
   state: GameState;
 }
+
+export type ErrorType = "PASSWORD_NOT_VALID" | "PASSWORD_NOT_PRESENT";
+
+export interface IError {
+  errorType: ErrorType;
+  payload: any;
+}
