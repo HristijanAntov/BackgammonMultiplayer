@@ -1,3 +1,5 @@
+import { ErrorType } from "./types";
+
 export const actions = {
   ROOMS_FETCHED: "ROOMS_FETCHED",
   ROOM_CREATED: "ROOM_CREATED",
@@ -19,3 +21,8 @@ export const actions = {
   UNDO_MOVE: "UNDO_MOVE",
   CONFIRM_MOVE: "CONFIRM_MOVE",
 };
+
+export const JOIN_ROOM_ERRORS: ErrorType[] = [
+  "PASSWORD_NOT_VALID",
+  "PASSWORD_NOT_PRESENT",
+];

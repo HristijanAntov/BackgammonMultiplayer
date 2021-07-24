@@ -1,4 +1,4 @@
-import { NetworkRole } from "./types";
+import { NetworkRole, ErrorType } from "./types";
 import { PlayerType } from "../backgammon/types";
 
 export const Actions = {
@@ -31,4 +31,9 @@ export const Rooms = {
 export const RolePlayerMap: Record<NetworkRole, PlayerType> = {
   HOST: "W",
   GUEST: "B",
+};
+
+export const Errors: Record<ErrorType, ErrorType> = {
+  PASSWORD_NOT_VALID: "PASSWORD_NOT_VALID",
+  PASSWORD_NOT_PRESENT: "PASSWORD_NOT_PRESENT",
 };

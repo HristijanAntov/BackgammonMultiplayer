@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNetworkManager } from "../../../game-manager/network-manager";
 import { JoinRoomForm } from "../../../game-manager/network-manager/hooks/useRooms";
 
-import { Container, Title, Body, Button, ControlWrapper } from "../ui/styles";
+import {
+  Container,
+  Title,
+  Body,
+  Button,
+  ControlWrapper,
+  ErrorWrapper,
+} from "../ui/styles";
 
 import {
   StyledBody,
@@ -16,11 +23,25 @@ import {
 
 //components
 import TextBox from "../ui/textbox";
+import { IError } from "../../../game-manager/network-manager/types";
 
 interface Props {}
 
 const isFormValid = (form: JoinRoomForm): boolean =>
   [form.username, form.password].some((it) => it === undefined || it === "");
+
+const getErrorMessage = (error: IError) => {
+  const { errorType, payload } = error;
+
+  switch (errorType) {
+    case "PASSWORD_NOT_PRESENT":
+      return `There was no password for room named: ${payload.roomName}`;
+    case "PASSWORD_NOT_VALID":
+      return `Password for room '${payload.roomName}' was not valid. Please try again.`;
+    default:
+      return "Some error happened";
+  }
+};
 
 const JoinGameComponent: React.FC<Props> = () => {
   const [expandedRoomId, setExpandedRoom] = useState<string | undefined>(
@@ -35,6 +56,7 @@ const JoinGameComponent: React.FC<Props> = () => {
     updateJoinRoomForm,
     joinRoomForm,
     setIsJoiningRoom,
+    error,
   } = roomsService;
 
   useEffect(() => {
@@ -42,6 +64,8 @@ const JoinGameComponent: React.FC<Props> = () => {
 
     return () => {
       roomsService.setRooms([]);
+      roomsService.setIsJoiningRoom(false);
+      roomsService.setError(undefined);
     };
   }, []);
 
@@ -64,6 +88,8 @@ const JoinGameComponent: React.FC<Props> = () => {
 
   const isJoinDisabled =
     isFormValid(roomsService.joinRoomForm) || isJoiningRoom;
+
+  const errorMessage = error === undefined ? undefined : getErrorMessage(error);
 
   return (
     <Container>
@@ -109,6 +135,11 @@ const JoinGameComponent: React.FC<Props> = () => {
                         onChange={(value) => syncField("password", value)}
                       />
                     </ControlWrapper>
+                    {errorMessage && (
+                      <ControlWrapper>
+                        <ErrorWrapper>{errorMessage}</ErrorWrapper>
+                      </ControlWrapper>
+                    )}
                     <ControlWrapper style={{ flexDirection: "row-reverse" }}>
                       <Button
                         style={{ height: "32px" }}

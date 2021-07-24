@@ -28,6 +28,7 @@ export const NetworkManagerProvider: React.FC = ({ children }) => {
   const roomsService = useRooms({});
 
   useListeners({ networkState, updateNetworkState, roomsService });
+
   const emitterService = useEmitters({
     networkState,
     updateNetworkState,
