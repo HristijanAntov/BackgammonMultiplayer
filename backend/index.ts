@@ -4,10 +4,10 @@ import http from "http";
 import { Server, Socket } from "socket.io";
 import { filter, map } from "lodash";
 import NetworkingManager from "./networking";
-import { Actions } from "./networking/constants";
-import { Room } from "./networking/types";
+import { Actions, Errors } from "./networking/constants";
+import { IError, Room } from "./networking/types";
 
-import { getUniqueId } from "./utils";
+import { getUniqueId, generateError } from "./utils";
 import { hashPassword, doesPasswordMatchHash } from "./utils/security-utils";
 
 // import { play } from "./test-sim";
@@ -96,7 +96,12 @@ io.on("connection", (socket: Socket) => {
       const { roomPasswordHash } = networkManager;
 
       if (!roomPasswordHash) {
-        throw new Error("Password hash is not present in network manager");
+        const error = generateError(Errors.PASSWORD_NOT_PRESENT, {
+          roomName: networkManager.roomName,
+          roomId: networkManager.id,
+        });
+
+        throw error;
       }
 
       const isPasswordValid = await doesPasswordMatchHash(
@@ -105,17 +110,23 @@ io.on("connection", (socket: Socket) => {
       );
 
       if (!isPasswordValid) {
-        throw new Error(
-          `password does not match hash for room : (${networkManager.roomName}, ${networkManager.id}) `
-        );
+        const error = generateError(Errors.PASSWORD_NOT_VALID, {
+          roomName: networkManager.roomName,
+          roomId: networkManager.id,
+        });
+
+        throw error;
       }
 
       if (isPasswordValid) {
         networkManager.joinPlayer(socket, username);
       }
     } catch (err) {
-      console.log(err);
+      const error = err as IError;
+
       //TODO: Report error to frontend somehow
+
+      socket.emit(Actions.ERROR_OCCURRED, error);
     }
   });
 });
