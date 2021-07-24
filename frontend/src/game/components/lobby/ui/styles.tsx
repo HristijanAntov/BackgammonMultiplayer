@@ -49,3 +49,13 @@ export const ControlWrapper = styled.div`
   display: flex;
   padding: 10px;
 `;
+
+export const ErrorWrapper = styled.label`
+  background-color: #fa4f4f;
+  font-size: 13px;
+  color: white;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-style: italic;
+`;
