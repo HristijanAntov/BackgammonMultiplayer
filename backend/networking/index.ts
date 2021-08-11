@@ -51,13 +51,11 @@ export default class NetworkingManager {
       role: "HOST",
       hostUsername: this.hostUsername,
       status: this.roomStatus,
+      roomName: this.roomName,
     });
 
     hostPlayer.on("disconnect", () => {
       this.roomStatus = "NOT_STARTED";
-      //TODO:
-      // In the future disconnections should be handled somehow
-      // for now we just mark the room as not started
     });
   }
 
@@ -102,20 +100,22 @@ export default class NetworkingManager {
       return;
     }
 
-    this.guestPlayer.emit(Actions.ROOM_JOINED, {
+    const roomPayload = {
       roomId: this.id,
-      role: "GUEST",
       hostUsername: this.hostUsername,
       guestUsername: this.guestUsername,
       status: this.roomStatus,
+      roomName: this.roomName,
+    };
+
+    this.guestPlayer.emit(Actions.ROOM_JOINED, {
+      ...roomPayload,
+      role: "GUEST",
     });
 
     this.hostPlayer.emit(Actions.SYNC_NETWORK_STATUS, {
-      roomId: this.id,
+      ...roomPayload,
       role: "HOST",
-      hostUsername: this.hostUsername,
-      guestUsername: this.guestUsername,
-      status: this.roomStatus,
     });
 
     this.initGameManager();

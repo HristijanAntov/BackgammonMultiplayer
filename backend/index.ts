@@ -29,7 +29,7 @@ const io = new Server(server, {
 });
 
 app.get("/ping", (req, res) => {
-  res.send("PONG KICO");
+  res.send("kico");
 });
 
 //TODO: put this somewhere else
@@ -123,8 +123,6 @@ io.on("connection", (socket: Socket) => {
       }
     } catch (err) {
       const error = err as IError;
-
-      //TODO: Report error to frontend somehow
 
       socket.emit(Actions.ERROR_OCCURRED, error);
     }

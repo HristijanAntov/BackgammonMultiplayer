@@ -16,9 +16,10 @@ import {
   PendingMoveTransactionEntry,
   PositionTransitionEntry,
   PositionFromHitSpace,
+  WinResult,
 } from "../types";
 
-import { getInitialState, getOpponent } from "../utils";
+import { getInitialState, getOpponent, isWin } from "../utils";
 
 import {
   getNextState,
@@ -45,6 +46,7 @@ const authorizeValidStates = (
   if (!validStates.includes(currentState)) {
     console.log(`Invalid Action ${action} for state ${currentState}`);
     // throw new Error(`Invalid Action ${action} for state ${currentState}`);
+    return false;
   }
 
   return true;
@@ -269,7 +271,7 @@ export default class Backgammon {
     };
   }
 
-  move(move: Move) {
+  move(move: Move): WinResult {
     const { turn, stateMachine } = this.state;
     const validStates: StateMachine[] = ["PENDING_MOVE"];
 
@@ -310,9 +312,24 @@ export default class Backgammon {
     };
 
     this.currentMoveNodes = nextMoveNodes;
-    //TODO: SAVE moves in a stack
 
-    return this;
+    const hasPlayerWon = isWin(this.state, move.player);
+
+    if (hasPlayerWon) {
+      this.transitionStateMachine("WIN");
+
+      this.state.turn = undefined;
+
+      return {
+        isWin: true,
+        player: move.player,
+      };
+    }
+
+    return {
+      isWin: false,
+      player: move.player,
+    };
   }
 
   undo() {
@@ -368,7 +385,12 @@ export default class Backgammon {
   }
 
   confirmMove(): PendingMoveTransactionEntry[] {
-    this.switchTurn();
+    const { state } = this;
+    const { stateMachine } = state;
+
+    if (stateMachine !== "WIN") {
+      this.switchTurn();
+    }
 
     const currentPendingTransactionEntries = [
       ...this.pendingTransactionEntries,

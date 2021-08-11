@@ -93,4 +93,9 @@ export interface TreeNode<T> {
   children: TreeNode<T>[];
 }
 
+export interface WinResult {
+  isWin: boolean;
+  player: PlayerType;
+}
+
 export type MoveNode = TreeNode<Move>;

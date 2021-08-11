@@ -6,6 +6,6 @@ export async function hashPassword(password: string) {
 }
 
 export async function doesPasswordMatchHash(hash: string, password: string) {
-  const isMatched = bcrypt.compare(password, hash);
+  const isMatched = await bcrypt.compare(password, hash);
   return isMatched;
 }

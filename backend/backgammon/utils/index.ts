@@ -12,3 +12,6 @@ export const getOpponent = (p: PlayerType): PlayerType =>
 
 export const isEqualMove = (move: Move, anotherMove: Move) =>
   isEqual(move, anotherMove);
+
+export const isWin = (state: GameState, player: PlayerType) =>
+  state.bearOff[player] === 15;
