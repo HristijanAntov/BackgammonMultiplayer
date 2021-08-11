@@ -20,6 +20,7 @@ export const NetworkManagerProvider: React.FC = ({ children }) => {
   const [networkState, updateNetworkState] = useState<NetworkState>({
     status: "NOT_STARTED",
     roomId: undefined,
+    roomName: undefined,
     hostUsername: undefined,
     guestUsername: undefined,
     role: undefined,

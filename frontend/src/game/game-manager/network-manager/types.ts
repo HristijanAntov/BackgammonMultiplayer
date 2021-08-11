@@ -6,6 +6,7 @@ export type NetworkRole = "HOST" | "GUEST";
 export interface NetworkState {
   status: NetworkStatus;
   roomId: string | undefined;
+  roomName: string | undefined;
   role: NetworkRole | undefined;
   hostUsername: string | undefined;
   guestUsername: string | undefined;

@@ -1,8 +1,5 @@
-import { useEffect } from "react";
 import IO from "../io";
-import { actions } from "../constants";
-import { useGameState } from "../../game-state";
-import { useGameUI } from "../../game-ui";
+import { Actions } from "../constants";
 import { NetworkState } from "../types";
 import { PositionTransition } from "../../../types";
 import { RoomsService } from "./useRooms";
@@ -18,6 +15,9 @@ export interface EmitterService {
   selectToMove: (positionTranslation: PositionTransition) => void;
   confirmMove: VoidEmitter;
   undo: VoidEmitter;
+  sendRematchInvitation: VoidEmitter;
+  acceptRematchInvitation: VoidEmitter;
+  declineRematchInvitation: VoidEmitter;
 }
 
 interface Params {
@@ -27,18 +27,15 @@ interface Params {
 }
 
 const useEmitters = (params: Params): EmitterService => {
-  const { updateGameState } = useGameState();
-  const { uiState } = useGameUI();
-
-  const { networkState, updateNetworkState, roomsService } = params;
+  const { roomsService } = params;
 
   const getRooms = () => {
     roomsService.setIsLoading(true);
-    IO.emit(actions.GET_ROOMS, "");
+    IO.emit(Actions.GET_ROOMS, "");
   };
 
   const createRoom = (roomName: string, username: string, password: string) => {
-    IO.emit(actions.CREATE_ROOM, {
+    IO.emit(Actions.CREATE_ROOM, {
       roomName,
       username,
       password,
@@ -46,7 +43,7 @@ const useEmitters = (params: Params): EmitterService => {
   };
 
   const joinRoom = (roomId: string, username: string, password: string) => {
-    IO.emit(actions.JOIN_ROOM, {
+    IO.emit(Actions.JOIN_ROOM, {
       roomId,
       username,
       password,
@@ -54,23 +51,36 @@ const useEmitters = (params: Params): EmitterService => {
   };
 
   const pressInitRoll = () => {
-    IO.emit(actions.INIT_ROLL, "");
+    IO.emit(Actions.INIT_ROLL, "");
   };
 
   const pressRoll = () => {
-    IO.emit(actions.ROLL, "");
+    IO.emit(Actions.ROLL, "");
   };
 
   const selectToMove = (positionTranslation: PositionTransition) => {
-    IO.emit(actions.MOVE, positionTranslation);
+    IO.emit(Actions.MOVE, positionTranslation);
   };
 
   const confirmMove = () => {
-    IO.emit(actions.CONFIRM_MOVE, "");
+    IO.emit(Actions.CONFIRM_MOVE, "");
   };
 
   const undo = () => {
-    IO.emit(actions.UNDO_MOVE, "");
+    IO.emit(Actions.UNDO_MOVE, "");
+  };
+
+  // Rematch logic
+  const sendRematchInvitation = () => {
+    IO.emit(Actions.INVITE_FOR_REMATCH, "");
+  };
+
+  const acceptRematchInvitation = () => {
+    IO.emit(Actions.ACCEPT_REMATCH, "");
+  };
+
+  const declineRematchInvitation = () => {
+    IO.emit(Actions.DECLINE_REMATCH, "");
   };
 
   return {
@@ -82,6 +92,9 @@ const useEmitters = (params: Params): EmitterService => {
     selectToMove,
     confirmMove,
     undo,
+    sendRematchInvitation,
+    acceptRematchInvitation,
+    declineRematchInvitation,
   };
 };
 
