@@ -21,9 +21,9 @@ const App: React.FC = () => {
   const [playHit] = useSound("/sound-effects/hit.wav");
   const [playDieThrow] = useSound("/sound-effects/dice.wav");
   const [playSelectChecker] = useSound("/sound-effects/select-checker.wav");
-
   const [confirmMove] = useSound("/sound-effects/confirm-move.wav");
   const [undoMove] = useSound("/sound-effects/undo.wav");
+  const [playWin] = useSound("/sound-effects/win.wav");
 
   useEffect(() => {
     const onResize = () => {
@@ -99,6 +99,13 @@ const App: React.FC = () => {
         id="play-undo-move"
       >
         Undo Move
+      </button>
+      <button
+        style={{ display: "none" }}
+        onClick={() => playWin()}
+        id="play-win"
+      >
+        Win
       </button>
     </ThemeProvider>
   );

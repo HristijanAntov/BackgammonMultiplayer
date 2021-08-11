@@ -1,28 +1,11 @@
 import React, { useContext, createContext, ReactElement } from "react";
-import {
-  get,
-  find,
-  every,
-  some,
-  map,
-  times,
-  identity,
-  cond,
-  constant,
-} from "lodash";
-
-import { useNetworkManager } from "../network-manager";
-import { NetworkRole } from "../network-manager/types";
+import { find, some, cond, constant } from "lodash";
 
 import { useGameState } from "../game-state";
 import { useGameUI } from "../game-ui";
 import { useGameInference } from "../inference";
 
-import { whoAmI, getPlayerTypeName } from "../../utils/backgammon";
-import { getOpponent } from "../../utils";
 import { Consequence, PlayerType } from "../../types";
-
-type PredicateCheck = () => boolean;
 
 export interface StatsContextValue {
   inferLog: () => ReactElement | string;
@@ -31,10 +14,10 @@ export interface StatsContextValue {
 export const StatsContext = createContext({} as StatsContextValue);
 
 export const StatsProvider: React.FC = ({ children }) => {
-  const { networkState } = useNetworkManager();
   const { state, consequences } = useGameState();
   const { uiState } = useGameUI();
-  const { isMyTurn, myPlayer, areThereNonAvailableMoves } = useGameInference();
+  const { areThereNonAvailableMoves, getUsernameByPlayer, hasWin, whoWon } =
+    useGameInference();
 
   const hasSameDieRolledConsequence = () =>
     some(consequences, {
@@ -48,6 +31,15 @@ export const StatsProvider: React.FC = ({ children }) => {
 
   const inferLog = () =>
     cond<undefined, string | ReactElement>([
+      [
+        hasWin,
+        constant(
+          <span style={{ color: "greenyellow" }}>
+            Player <label style={{ color: "#ffd17a" }}>{whoWon()}</label> has
+            won
+          </span>
+        ),
+      ],
       [areThereNonAvailableMoves, constant("There are no moves available")],
       [
         hasSameDieRolledConsequence,
@@ -62,8 +54,8 @@ export const StatsProvider: React.FC = ({ children }) => {
 
           return (
             <span>
-              {getPlayerTypeName(consequence.payload.turn)} had bigger roll, he
-              plays first
+              {getUsernameByPlayer(consequence.payload.turn)} had bigger roll,
+              he plays first
             </span>
           );
         },
@@ -74,20 +66,48 @@ export const StatsProvider: React.FC = ({ children }) => {
       ],
       [
         () => uiState.isExecutingMove,
-        constant(`${getPlayerTypeName(state.turn)}'s turn: Currently moving`),
+        constant(
+          <span>
+            <label style={{ color: "#ffd17a" }}>
+              {getUsernameByPlayer(state.turn as PlayerType)}
+            </label>
+            's turn: Currently moving
+          </span>
+        ),
       ],
       [
         () => state.stateMachine === "PENDING_MOVE",
-        constant(`${getPlayerTypeName(state.turn)}'s turn: Waiting to move`),
+        constant(
+          <span>
+            <label style={{ color: "#ffd17a" }}>
+              {getUsernameByPlayer(state.turn as PlayerType)}{" "}
+            </label>
+            's turn: Waiting to move
+          </span>
+        ),
       ],
       [
         () => uiState.isExecutingRoll["B"] || uiState.isExecutingRoll["W"],
-        constant(`${getPlayerTypeName(state.turn)}'s turn: Currently rolling`),
+        constant(
+          <span>
+            <label style={{ color: "#ffd17a" }}>
+              {getUsernameByPlayer(state.turn as PlayerType)}{" "}
+            </label>
+            's turn: Currently rolling
+          </span>
+        ),
       ],
 
       [
         () => state.stateMachine === "PENDING_ROLL",
-        constant(`${getPlayerTypeName(state.turn)}'s turn: Waiting to roll`),
+        constant(
+          <span>
+            <label style={{ color: "#ffd17a" }}>
+              {getUsernameByPlayer(state.turn as PlayerType)}
+            </label>{" "}
+            's turn: Waiting to roll
+          </span>
+        ),
       ],
     ])(undefined);
 

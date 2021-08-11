@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
   Board,
@@ -26,7 +26,14 @@ interface Props {}
 const woodBarsSides: Side[] = ["W", "N", "S", "E", "CENTER"];
 
 const BoardComponent: React.FC<Props> = () => {
-  const { isMyTurn } = useGameInference();
+  const { isMyTurn, hasWin } = useGameInference();
+
+  useEffect(() => {
+    if (hasWin()) {
+      const el = document.querySelector("#play-win") as HTMLButtonElement;
+      el.click();
+    }
+  }, [hasWin()]);
 
   return (
     <Board>

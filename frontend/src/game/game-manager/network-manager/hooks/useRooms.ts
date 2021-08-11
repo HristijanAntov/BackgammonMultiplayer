@@ -17,6 +17,10 @@ export interface JoinRoomForm {
 export interface RoomsService {
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
+  isSendRematchInvitationLoading: boolean;
+  hasPendingRematchInvitation: boolean;
+  setHasPendingRematchInvitation: (hasIt: boolean) => void;
+  setIsSendRematchInvitationLoading: (isLoading: boolean) => void;
   rooms: Room[];
   setRooms: (rooms: Room[]) => void;
   createRoomForm: CreateRoomForm;
@@ -49,6 +53,12 @@ const initJoinRoomForm = () => ({
 
 const useRoomsService = (params: Params): RoomsService => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSendRematchInvitationLoading, setIsSendRematchInvitationLoading] =
+    useState<boolean>(false);
+
+  const [hasPendingRematchInvitation, setHasPendingRematchInvitation] =
+    useState<boolean>(false);
+
   const [rooms, setRooms] = useState<Room[]>([]);
   const [isCreatingRoom, setIsCreatingRoom] = useState<boolean>(false);
   const [isJoiningRoom, setIsJoiningRoom] = useState<boolean>(false);
@@ -88,6 +98,10 @@ const useRoomsService = (params: Params): RoomsService => {
     initJoinForm,
     error,
     setError,
+    isSendRematchInvitationLoading,
+    setIsSendRematchInvitationLoading,
+    hasPendingRematchInvitation,
+    setHasPendingRematchInvitation,
   };
 };
 

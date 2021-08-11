@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import map from "lodash/map";
 
 import IO from "../io";
-import { actions, JOIN_ROOM_ERRORS } from "../constants";
+import { Actions, JOIN_ROOM_ERRORS } from "../constants";
 import { useGameState } from "../../game-state";
 import { UIState, useGameUI } from "../../game-ui";
 import { RoomsService } from "./useRooms";
@@ -73,21 +73,22 @@ const useListeners = (params: Params): Result => {
   };
 
   useEffect(() => {
-    IO.on(actions.ROOMS_FETCHED, (payload: any) => {
+    IO.on(Actions.ROOMS_FETCHED, (payload: any) => {
       wait(200).then(() => {
         roomsService.setRooms(payload.rooms);
         roomsService.setIsLoading(false);
       });
     });
 
-    IO.on(actions.ROOM_CREATED, (payload: any) => {
-      const { roomId, role, hostUsername, status } = payload;
-      console.log(actions.ROOM_CREATED, payload);
+    IO.on(Actions.ROOM_CREATED, (payload: any) => {
+      const { roomId, roomName, role, hostUsername, status } = payload;
+      console.log(Actions.ROOM_CREATED, payload);
 
       currentNetworkState = {
         ...currentNetworkState,
         status,
         roomId,
+        roomName,
         role,
         hostUsername,
       };
@@ -102,8 +103,8 @@ const useListeners = (params: Params): Result => {
       });
     });
 
-    IO.on(actions.SYNC_NETWORK_STATUS, (payload: any) => {
-      console.log(actions.SYNC_NETWORK_STATUS, payload);
+    IO.on(Actions.SYNC_NETWORK_STATUS, (payload: any) => {
+      console.log(Actions.SYNC_NETWORK_STATUS, payload);
 
       const { roomId, role, hostUsername, guestUsername, status } = payload;
 
@@ -119,15 +120,17 @@ const useListeners = (params: Params): Result => {
       updateNetworkState(currentNetworkState);
     });
 
-    IO.on(actions.ROOM_JOINED, (payload: any) => {
-      console.log(actions.ROOM_JOINED, payload);
-      const { roomId, role, hostUsername, guestUsername, status } = payload;
+    IO.on(Actions.ROOM_JOINED, (payload: any) => {
+      console.log(Actions.ROOM_JOINED, payload);
+      const { roomId, roomName, role, hostUsername, guestUsername, status } =
+        payload;
 
       console.log(role, "joiuning");
 
       currentNetworkState = {
         ...currentNetworkState,
         roomId,
+        roomName,
         role,
         hostUsername,
         guestUsername,
@@ -139,13 +142,16 @@ const useListeners = (params: Params): Result => {
       history.push(`/game/${roomId}`);
     });
 
-    IO.on(actions.GAME_STARTED, (payload: any) => {
-      console.log(actions.GAME_STARTED, payload);
+    IO.on(Actions.GAME_STARTED, (payload: any) => {
+      console.log(Actions.GAME_STARTED, payload);
       const { initState } = payload;
 
       updateGameState({
         ...initState,
       });
+
+      roomsService.setIsSendRematchInvitationLoading(false);
+      roomsService.setHasPendingRematchInvitation(false);
 
       currentNetworkState = {
         ...currentNetworkState,
@@ -154,8 +160,8 @@ const useListeners = (params: Params): Result => {
       updateNetworkState(currentNetworkState);
     });
 
-    IO.on(actions.SYNC_STATE, (payload: any) => {
-      console.log(actions.SYNC_STATE, payload);
+    IO.on(Actions.SYNC_STATE, (payload: any) => {
+      console.log(Actions.SYNC_STATE, payload);
       const { state, finalState } = payload;
 
       updateGameState({
@@ -184,8 +190,8 @@ const useListeners = (params: Params): Result => {
       });
     });
 
-    IO.on(actions.EXECUTE_ROLL, async (payload: ExecuteRollPayload) => {
-      console.log(actions.EXECUTE_ROLL, payload);
+    IO.on(Actions.EXECUTE_ROLL, async (payload: ExecuteRollPayload) => {
+      console.log(Actions.EXECUTE_ROLL, payload);
 
       const { diceRolledMetadata, consequences, state } = payload;
 
@@ -231,8 +237,8 @@ const useListeners = (params: Params): Result => {
       });
     });
 
-    IO.on(actions.INIT_ROLL, (payload: any) => {
-      console.log(actions.INIT_ROLL, payload);
+    IO.on(Actions.INIT_ROLL, (payload: any) => {
+      console.log(Actions.INIT_ROLL, payload);
       const { state } = payload;
 
       updateGameState({
@@ -243,8 +249,8 @@ const useListeners = (params: Params): Result => {
       updateNetworkState(currentNetworkState);
     });
 
-    IO.on(actions.EXECUTE_MOVE, async (payload: any) => {
-      console.log(actions.EXECUTE_MOVE, "EXECUTING", payload);
+    IO.on(Actions.EXECUTE_MOVE, async (payload: any) => {
+      console.log(Actions.EXECUTE_MOVE, "EXECUTING", payload);
 
       const transactionEntries: MoveTransactionEntry[] =
         payload.transactionEntries;
@@ -276,8 +282,18 @@ const useListeners = (params: Params): Result => {
       });
     });
 
-    IO.on(actions.ERROR_OCCURRED, async (error: IError) => {
-      console.log(actions.ERROR_OCCURRED, "ERROR", error);
+    IO.on(Actions.REMATCH_INVITATION_SENT, () => {
+      roomsService.setHasPendingRematchInvitation(true);
+    });
+
+    IO.on(Actions.REMATCH_INVITATION_DECLINED, () => {
+      roomsService.setIsSendRematchInvitationLoading(false);
+      roomsService.setHasPendingRematchInvitation(false);
+      history.push("/");
+    });
+
+    IO.on(Actions.ERROR_OCCURRED, async (error: IError) => {
+      console.log(Actions.ERROR_OCCURRED, "ERROR", error);
 
       const { errorType } = error;
 

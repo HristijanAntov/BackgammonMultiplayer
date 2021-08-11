@@ -13,6 +13,9 @@ export const getBearOffPosition = (player: PlayerType) =>
 export const whoAmI = (role: NetworkRole): PlayerType =>
   role === "HOST" ? "W" : "B";
 
+export const getNetworkRoleByPlayer = (player: PlayerType): NetworkRole =>
+  player === "W" ? "HOST" : "GUEST";
+
 export const isThereMoveOnPipPosition = (
   pipPosition: number,
   positionTranslations: PositionTransitionEntry | undefined

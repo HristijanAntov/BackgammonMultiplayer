@@ -49,12 +49,14 @@ export const DIMENSIONS_CONFIG = {
   DIE_POINT_RATIO: 0.19,
 };
 
-export const Player: Record<string, PlayerType> = {
+export type PlayerAlias = "Black" | "White";
+
+export const PlayerTypeEnum: Record<PlayerAlias, PlayerType> = {
   Black: "B",
   White: "W",
 };
 
-export const PlayerNameEnum: Record<PlayerType, string> = {
+export const PlayerNameEnum: Record<PlayerType, PlayerAlias> = {
   W: "White",
   B: "Black",
 };
@@ -79,30 +81,30 @@ export const INITIAL_STATE: GameState = {
     B: 0,
   },
   pips: [
-    { isEmpty: false, player: Player.Black, count: 2, pipId: 0 },
+    { isEmpty: false, player: PlayerTypeEnum.Black, count: 2, pipId: 0 },
     { isEmpty: true, player: undefined, count: 0, pipId: 1 },
     { isEmpty: true, player: undefined, count: 0, pipId: 2 },
     { isEmpty: true, player: undefined, count: 0, pipId: 3 },
     { isEmpty: true, player: undefined, count: 0, pipId: 4 },
-    { isEmpty: false, player: Player.White, count: 5, pipId: 5 },
+    { isEmpty: false, player: PlayerTypeEnum.White, count: 5, pipId: 5 },
     { isEmpty: true, player: undefined, count: 0, pipId: 6 },
-    { isEmpty: false, player: Player.White, count: 3, pipId: 7 },
+    { isEmpty: false, player: PlayerTypeEnum.White, count: 3, pipId: 7 },
     { isEmpty: true, player: undefined, count: 0, pipId: 8 },
     { isEmpty: true, player: undefined, count: 0, pipId: 9 },
     { isEmpty: true, player: undefined, count: 0, pipId: 10 },
-    { isEmpty: false, player: Player.Black, count: 5, pipId: 11 },
-    { isEmpty: false, player: Player.White, count: 5, pipId: 12 },
+    { isEmpty: false, player: PlayerTypeEnum.Black, count: 5, pipId: 11 },
+    { isEmpty: false, player: PlayerTypeEnum.White, count: 5, pipId: 12 },
     { isEmpty: true, player: undefined, count: 0, pipId: 13 },
     { isEmpty: true, player: undefined, count: 0, pipId: 14 },
     { isEmpty: true, player: undefined, count: 0, pipId: 15 },
-    { isEmpty: false, player: Player.Black, count: 3, pipId: 16 },
+    { isEmpty: false, player: PlayerTypeEnum.Black, count: 3, pipId: 16 },
     { isEmpty: true, player: undefined, count: 0, pipId: 17 },
-    { isEmpty: false, player: Player.Black, count: 5, pipId: 18 },
+    { isEmpty: false, player: PlayerTypeEnum.Black, count: 5, pipId: 18 },
     { isEmpty: true, player: undefined, count: 0, pipId: 19 },
     { isEmpty: true, player: undefined, count: 0, pipId: 20 },
     { isEmpty: true, player: undefined, count: 0, pipId: 21 },
     { isEmpty: true, player: undefined, count: 0, pipId: 22 },
-    { isEmpty: false, player: Player.White, count: 2, pipId: 23 },
+    { isEmpty: false, player: PlayerTypeEnum.White, count: 2, pipId: 23 },
   ],
 };
 

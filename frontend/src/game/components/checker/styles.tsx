@@ -26,6 +26,18 @@ const blinkChecker = () => keyframes`
   }
 `;
 
+const bounceChecker = () => keyframes`
+  0% {
+    transform: scale(1);
+    // border: 2px solid white;
+  }
+  100% {
+  
+    transform: scale(1.1);
+    // border: 2px solid orange;
+  }
+`;
+
 export const CheckerInner = styled.div<{ player: any }>`
   border-radius: 50%;
   width: 80%;
@@ -121,8 +133,9 @@ export const Checker = styled.div<{
 
     ${({ isSelected }) =>
       isSelected &&
-      `  
-      border: 1px solid black;
-     `}
+      css`
+        border: 1px solid black;
+        // animation: ${bounceChecker()} 0.3s ease-out infinite alternate;
+      `}
 
 `;

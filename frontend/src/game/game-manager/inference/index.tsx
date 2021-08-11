@@ -1,5 +1,5 @@
 import React, { useContext, createContext } from "react";
-import { get, find, every, map, times, identity } from "lodash";
+import { get, find, every, map, times, maxBy, identity } from "lodash";
 
 import { useNetworkManager } from "../network-manager";
 import { NetworkRole } from "../network-manager/types";
@@ -7,9 +7,11 @@ import { NetworkRole } from "../network-manager/types";
 import { useGameState } from "../game-state";
 import { useGameUI } from "../game-ui";
 
-import { whoAmI } from "../../utils/backgammon";
+import { getNetworkRoleByPlayer, whoAmI } from "../../utils/backgammon";
+
 import { getOpponent } from "../../utils";
 import { PlayerType } from "../../types";
+import { PlayerTypeEnum } from "../../components/constants";
 
 type PredicateCheck = () => boolean;
 
@@ -29,15 +31,20 @@ export interface InferenceContextValue {
     pipId: number | "hit-space",
     player: PlayerType | undefined
   ) => boolean;
+  getUsernameByPlayer: (player: PlayerType) => string;
+  hasWin: PredicateCheck;
+  whoWon: () => string | undefined;
   areThereNonAvailableMoves: PredicateCheck;
   shouldShowDiceContainer: (player: PlayerType) => boolean;
   getDiceMetadata: (player: PlayerType) => DieContainerMetadata[];
+  shouldShowRematchInvitation: PredicateCheck;
+  canInviteForRematch: PredicateCheck;
 }
 
 export const InferenceContext = createContext({} as InferenceContextValue);
 
 export const InferenceProvider: React.FC = ({ children }) => {
-  const { networkState } = useNetworkManager();
+  const { networkState, roomsService } = useNetworkManager();
   const { state, consequences } = useGameState();
   const { uiState } = useGameUI();
 
@@ -241,19 +248,76 @@ export const InferenceProvider: React.FC = ({ children }) => {
     return [];
   };
 
+  const getUsernameByPlayer = (player: PlayerType) => {
+    const role = getNetworkRoleByPlayer(player);
+    const username =
+      role === "HOST" ? networkState.hostUsername : networkState.guestUsername;
+
+    return username || "";
+  };
+
+  const hasWin = () => {
+    const { stateMachine } = state;
+    return stateMachine === "WIN";
+  };
+
+  const whoWon = (): undefined | string => {
+    if (!hasWin()) {
+      return undefined;
+    }
+
+    const winningPlayer = maxBy(
+      map(
+        [PlayerTypeEnum.White, PlayerTypeEnum.Black],
+        (player: PlayerType) => ({
+          playerName: getUsernameByPlayer(player),
+          bearOffRank: state.bearOff[player],
+        })
+      ),
+      "bearOffRank"
+    )?.playerName;
+
+    return winningPlayer;
+  };
+
+  const shouldShowRematchInvitation = () => {
+    if (!hasWin()) {
+      return false;
+    }
+
+    const { hasPendingRematchInvitation } = roomsService;
+    return hasPendingRematchInvitation;
+  };
+
+  const canInviteForRematch = () => {
+    if (!hasWin()) {
+      return false;
+    }
+
+    const { isSendRematchInvitationLoading, hasPendingRematchInvitation } =
+      roomsService;
+
+    return !isSendRematchInvitationLoading && !hasPendingRematchInvitation;
+  };
+
   return (
     <InferenceContext.Provider
       value={{
         myPlayer,
         isMyTurn,
+        canInviteForRematch,
+        shouldShowRematchInvitation,
         canInitRoll,
         canRoll,
         canUndo,
         canConfirmMove,
         getHasPipMove,
+        getUsernameByPlayer,
         areThereNonAvailableMoves: areThereNonAvailableMoves,
         shouldShowDiceContainer,
         getDiceMetadata,
+        hasWin,
+        whoWon,
       }}
     >
       {children}

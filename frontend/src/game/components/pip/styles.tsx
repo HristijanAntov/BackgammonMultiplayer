@@ -39,13 +39,11 @@ export const Triangle = styled.div<{ metadata: any; shouldHighlight: boolean }>`
   transform: opacity 0.2s ease-out;
   ${({ metadata }) => renderPipTriangle(metadata)};
 
-  transition: background-color 0s ease-out;
+  transition: background-color 0.5s ease-out;
   ${({ shouldHighlight }) =>
     shouldHighlight &&
     `
     background-color: #7db53c;
-    cursor: pointer;
-    
   `}
 `;
 
